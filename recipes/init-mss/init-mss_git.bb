@@ -29,8 +29,11 @@ do_install() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${systemd_unitdir}/system/multi-user.target.wants/
+        install -d ${D}${systemd_unitdir}/system/ffbm.target.wants/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
         ln -sf ${systemd_unitdir}/system/init_sys_mss.service \
             ${D}${systemd_unitdir}/system/multi-user.target.wants/init_sys_mss.service
+        ln -sf ${systemd_unitdir}/system/init_sys_mss.service \
+            ${D}${systemd_unitdir}/system/ffbm.target.wants/init_sys_mss.service
     fi
 }
