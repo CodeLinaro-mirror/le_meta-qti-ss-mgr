@@ -21,8 +21,11 @@ do_install() {
       install -d ${D}${systemd_unitdir}/system/
       install -m 0644 ${WORKDIR}/reboot-daemon.service -D ${D}${systemd_unitdir}/system/reboot-daemon.service
       install -d ${D}${systemd_unitdir}/system/multi-user.target.wants/
+      install -d ${D}${systemd_unitdir}/system/ffbm.target.wants/
       # enable the service for multi-user.target
       ln -sf ${systemd_unitdir}/system/reboot-daemon.service \
            ${D}${systemd_unitdir}/system/multi-user.target.wants/reboot-daemon.service
+      ln -sf ${systemd_unitdir}/system/reboot-daemon.service \
+           ${D}${systemd_unitdir}/system/ffbm.target.wants/reboot-daemon.service
    fi
 }
