@@ -5,9 +5,9 @@ LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/${LICENSE};md5=3775480a712fc46a69647678acb234cb"
 PR = "r4"
 
-FILESPATH =+ "${WORKSPACE}:"
+FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
 
-SRC_URI = "file://mdm-ss-mgr/reboot-daemon"
+SRC_URI = "file://reboot-daemon"
 SRC_URI += "file://reboot-daemon.service"
 
 S = "${WORKDIR}/reboot-daemon"
