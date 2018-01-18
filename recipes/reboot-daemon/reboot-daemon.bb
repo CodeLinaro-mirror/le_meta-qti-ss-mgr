@@ -12,6 +12,7 @@ SRC_URI += "file://reboot-daemon.service"
 
 S = "${WORKDIR}/reboot-daemon"
 
+EXTRA_OEMAKE_append_apq8053 ="AM_CFLAGS+=-DDROP_PRIVS"
 EXTRA_OEMAKE_append = " CROSS=${HOST_PREFIX}"
 FILES_${PN} += "${systemd_unitdir}/system/"
 
