@@ -17,6 +17,12 @@ S = "${WORKDIR}/mdm-ss-mgr/init_mss/"
 EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
 
+EXTRA_OECONF_append = " --enable-modem"
+
+# QCS40x has wcnss but not modem
+EXTRA_OECONF_remove_qcs40x = "--enable-modem"
+EXTRA_OECONF_append_qcs40x = " --enable-wcnss"
+
 FILES_${PN} += "${systemd_unitdir}/system/"
 
 INITSCRIPT_NAME = "init_sys_mss"
