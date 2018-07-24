@@ -12,12 +12,10 @@ SRC_URI = "file://mdm-ss-mgr/init_mss/"
 SRC_URI += "file://init_sys_mss.service"
 
 S = "${WORKDIR}/mdm-ss-mgr/init_mss/"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'apq8009', '--enable-indefinite-sleep', '', d)}"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'apq8017', '--enable-indefinite-sleep', '', d)}"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'apq8053', '--enable-indefinite-sleep', '', d)}"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'apq8096', '--enable-indefinite-sleep', '', d)}"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'apq8098', '--enable-indefinite-sleep', '', d)}"
-EXTRA_OECONF += " ${@bb.utils.contains('BASEMACHINE', 'sdxpoorwills', '--enable-indefinite-sleep', '', d)}"
+
+# Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
+EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
+EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
 
 FILES_${PN} += "${systemd_unitdir}/system/"
 
