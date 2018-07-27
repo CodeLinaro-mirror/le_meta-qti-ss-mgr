@@ -35,6 +35,7 @@ do_install() {
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${systemd_unitdir}/system/sysinit.target.wants/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
     else
         install -m 0755 ${S}/start_mss -D ${D}${sysconfdir}/init.d/init_sys_mss
     fi
