@@ -28,7 +28,8 @@
 [Unit]
 SourcePath=/sbin/init_mss
 Description=Modem Init Service
-After=firmware-links.service
+After=firmware.mount
+Requires=firmware.mount
 
 [Service]
 Restart=no
@@ -36,4 +37,4 @@ RemainAfterExit=yes
 ExecStart=/sbin/init_mss
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=sysinit.target
