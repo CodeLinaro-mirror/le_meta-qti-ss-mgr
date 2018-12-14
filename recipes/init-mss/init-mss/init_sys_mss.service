@@ -28,10 +28,10 @@
 [Unit]
 SourcePath=/sbin/init_mss
 Description=Modem Init Service
-After=firmware-links.service
+After=firmware-mount.service
 
 [Service]
-Restart=no
+Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/sbin/init_mss
 
