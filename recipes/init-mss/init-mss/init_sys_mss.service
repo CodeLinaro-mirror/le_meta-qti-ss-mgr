@@ -32,7 +32,7 @@ After=firmware.mount
 Requires=firmware.mount
 
 [Service]
-Restart=no
+Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/sbin/init_mss
 
