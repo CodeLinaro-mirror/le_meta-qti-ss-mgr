@@ -16,6 +16,7 @@ S = "${WORKDIR}/init_mss"
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
 EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
+EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
 
 EXTRA_OECONF_append = " --enable-modem"
 
@@ -28,6 +29,7 @@ FILES_${PN} += "${systemd_unitdir}/system/"
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
 INITSCRIPT_PARAMS_sdxpoorwills = "start 31 S ."
+INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
 
 do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
