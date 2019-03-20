@@ -35,9 +35,35 @@ do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
-        install -d ${D}${systemd_unitdir}/system/sysinit.target.wants/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
-        ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
+
+        # for non AB targets with NAND flash, set dependency on firmare-ubi.service.
+        if ${@bb.utils.contains('DISTRO_FEATURES','ab-boot-support','false','true',d)}; then
+            if ${@bb.utils.contains('DISTRO_FEATURES','nand-boot','true','false',d)}; then
+
+                # Clear the values of After, Requires and WantedBy.
+                sed -i '/After/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/Requires/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/WantedBy/s/sysinit.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
+                # Add new values to After, Requires and WantedBy.
+                sed -i '/After/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/Requires/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
+                # Add new line after "Requires=firmware-mount.service" to set DefaultDependencies to no.
+                sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
+                install -d ${D}${systemd_unitdir}/system/local-fs.target.wants/
+                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss.service
+           else
+                install -d ${D}${systemd_unitdir}/system/sysinit.target.wants/
+                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
+           fi
+        else
+            install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
+            ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
+        fi
     else
         install -m 0755 ${S}/start_mss -D ${D}${sysconfdir}/init.d/init_sys_mss
     fi
