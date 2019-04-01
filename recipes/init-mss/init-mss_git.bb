@@ -47,7 +47,7 @@ do_install() {
                 sed -i '/WantedBy/s/sysinit.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
                 # Add new values to After, Requires and WantedBy.
-                sed -i '/After/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/\<After\>/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/Requires/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
