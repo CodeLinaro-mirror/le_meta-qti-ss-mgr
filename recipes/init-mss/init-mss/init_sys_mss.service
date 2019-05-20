@@ -35,6 +35,7 @@ Requires=firmware.mount
 Restart=on-failure
 RemainAfterExit=yes
 ExecStart=/sbin/init_mss
+Nice=-5
 
 [Install]
 WantedBy=sysinit.target
