@@ -10,6 +10,8 @@ FILESEXTRAPATHS_prepend := "${THISDIR}/init_mss:"
 
 SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
+SRC_URI += "file://init_mss.rules"
+SRC_URI += "file://init_mss.conf"
 
 S = "${WORKDIR}/init_mss"
 
@@ -25,6 +27,7 @@ EXTRA_OECONF_remove_qcs40x = "--enable-modem"
 EXTRA_OECONF_append_qcs40x = " --enable-wcnss"
 
 FILES_${PN} += "${systemd_unitdir}/system/"
+FILES_${PN} += "${sysconfdir}/udev/rules.d/"
 
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
@@ -35,7 +38,10 @@ do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
+        install -d ${D}${sysconfdir}/udev/rules.d/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
+        install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
 
         # for non AB targets with NAND flash, set dependency on firmare-ubi.service.
         if ${@bb.utils.contains('DISTRO_FEATURES','ab-boot-support','false','true',d)}; then

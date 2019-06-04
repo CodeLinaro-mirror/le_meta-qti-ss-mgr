@@ -1,0 +1,2 @@
+ACTION=="add" SUBSYSTEM=="subsys", KERNEL=="subsys_modem", OWNER="system", GROUP="system", MODE="0644"
+ACTION=="add" SUBSYSTEM=="subsys", KERNEL=="subsys_wcnss", OWNER="system", GROUP="system", MODE="0644"
