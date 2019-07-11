@@ -47,15 +47,21 @@ do_install() {
                 sed -i '/WantedBy/s/sysinit.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
                 # Add new values to After, Requires and WantedBy.
-                sed -i '/\<After\>/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/\<After\>/s/$/firmware-mount.service QCMAP_ConnectionManagerd.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/Requires/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/WantedBy/s/$/sockets.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                # Add new line after "Requires=firmware-mount.service" to set DefaultDependencies to no.
+                # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
                 sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                install -d ${D}${systemd_unitdir}/system/local-fs.target.wants/
-                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss.service
+                # Add sleep for mdm targets to ensure full CPU is available to load modem.
+                if ${@bb.utils.contains('DISTRO_NAME', 'mdm', 'true', 'false', d)}; then
+                    sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 8' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                fi
+
+                install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
+                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
            else
                 install -d ${D}${systemd_unitdir}/system/sysinit.target.wants/
                 ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
