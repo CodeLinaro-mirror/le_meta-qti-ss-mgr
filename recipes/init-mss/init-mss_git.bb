@@ -42,36 +42,27 @@ do_install() {
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
         install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
         install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
+        if ${@bb.utils.contains('DISTRO_NAME', 'mdm', 'true', 'false', d)}; then
+           #ADD NAND CHECK IF REQUIRED.
+           # Clear the values of After, Requires and WantedBy.
+           sed -i '/After/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/Requires/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/WantedBy/s/sysinit.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-        # for non AB targets with NAND flash, set dependency on firmare-ubi.service.
-        if ${@bb.utils.contains('DISTRO_FEATURES','ab-boot-support','false','true',d)}; then
-            if ${@bb.utils.contains('DISTRO_FEATURES','nand-boot','true','false',d)}; then
+           # Add new values to After, Requires and WantedBy.
+           sed -i '/\<After\>/s/$/firmware-mount.service QCMAP_ConnectionManagerd.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/Requires/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/WantedBy/s/$/sockets.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                # Clear the values of After, Requires and WantedBy.
-                sed -i '/After/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/Requires/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/WantedBy/s/sysinit.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
+           sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                # Add new values to After, Requires and WantedBy.
-                sed -i '/\<After\>/s/$/firmware-mount.service QCMAP_ConnectionManagerd.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/Requires/s/$/firmware-mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/WantedBy/s/$/sockets.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
-                sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-                # Add sleep for mdm targets to ensure full CPU is available to load modem.
-                if ${@bb.utils.contains('DISTRO_NAME', 'mdm', 'true', 'false', d)}; then
-                    sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 8' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                fi
-
-                install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
-                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
-           else
-                install -d ${D}${systemd_unitdir}/system/sysinit.target.wants/
-                ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
-           fi
+            # Add sleep for mdm targets to ensure full CPU is available to load modem.
+            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 8' ${D}${systemd_unitdir}/system/init_sys_mss.service
+            install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
+            ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
         else
             install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
             ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
