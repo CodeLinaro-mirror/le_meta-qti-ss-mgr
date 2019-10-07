@@ -42,7 +42,7 @@ do_install() {
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
         install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
         install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
-        if ${@bb.utils.contains('DISTRO_NAME', 'mdm', 'true', 'false', d)}; then
+        if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)}; then
            #ADD NAND CHECK IF REQUIRED.
            # Clear the values of After, Requires and WantedBy.
            sed -i '/After/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
