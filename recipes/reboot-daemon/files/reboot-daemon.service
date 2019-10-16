@@ -4,7 +4,14 @@ Description= reboot-daemon service
 
 [Service]
 Restart=always
+User=system
+Group=rebooters
+ExecStartPre=+mkfifo /dev/rebooterdev
+ExecStartPre=+chown system:rebooters /dev/rebooterdev
+ExecStartPre=+chmod 0620 /dev/rebooterdev
+ExecStartPre=+/bin/sh -c "if [ -x /sbin/restorecon ]; then /sbin/restorecon /dev/rebooterdev; fi"
 ExecStart=/sbin/reboot-daemon
+ExecStopPost=+rm -rf /dev/rebooterdev
 
 [Install]
 WantedBy=multi-user.target
