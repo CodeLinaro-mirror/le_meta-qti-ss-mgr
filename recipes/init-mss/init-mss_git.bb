@@ -19,6 +19,7 @@ S = "${WORKDIR}/init_mss"
 EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
+EXTRA_OECONF_append_qti-distro-base = " --enable-indefinite-sleep"
 
 EXTRA_OECONF_append = " --enable-modem"
 
