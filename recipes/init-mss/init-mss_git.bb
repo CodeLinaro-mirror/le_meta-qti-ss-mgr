@@ -19,12 +19,15 @@ S = "${WORKDIR}/init_mss"
 EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
 EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
+EXTRA_OECONF_append_qti-distro-base = " --enable-indefinite-sleep"
+
+EXTRA_OECONF_append_qcs40x = " --enable-indefinite-sleep=yes"
+EXTRA_OECONF_append_qcs40x = " --enable-wcnss=yes"
 
 EXTRA_OECONF_append = " --enable-modem"
 
 # QCS40x has wcnss but not modem
 EXTRA_OECONF_remove_qcs40x = "--enable-modem"
-EXTRA_OECONF_append_qcs40x = " --enable-wcnss"
 
 FILES_${PN} += "${systemd_unitdir}/system/"
 FILES_${PN} += "${sysconfdir}/udev/rules.d/"
@@ -60,7 +63,7 @@ do_install() {
 
 
             # Add sleep for mdm targets to ensure full CPU is available to load modem.
-            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 8' ${D}${systemd_unitdir}/system/init_sys_mss.service
+            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 11' ${D}${systemd_unitdir}/system/init_sys_mss.service
             install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
             ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
         else
