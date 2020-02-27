@@ -17,7 +17,7 @@ FILES_${PN} += "${systemd_unitdir}/system/"
 EXTRA_OECONF += "${@bb.utils.contains('DISTRO_FEATURES', 'systemd', '--with-systemd', '', d)}"
 
 do_install() {
-    install -m 0755 ${S}/reboot-daemon -D ${D}/sbin/reboot-daemon
+    install -m 0755 ${S}/reboot-daemon -D ${D}/${sbindir}/reboot-daemon
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
       install -d ${D}${systemd_unitdir}/system/
       install -m 0644 ${WORKDIR}/reboot-daemon.service -D ${D}${systemd_unitdir}/system/reboot-daemon.service
