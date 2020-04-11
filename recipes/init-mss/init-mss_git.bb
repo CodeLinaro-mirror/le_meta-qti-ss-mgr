@@ -26,6 +26,8 @@ EXTRA_OECONF_append = " --enable-modem"
 EXTRA_OECONF_remove_qcs40x = "--enable-modem"
 EXTRA_OECONF_append_qcs40x = " --enable-wcnss"
 
+EXTRA_OECONF_remove_sm8250 = "--enable-modem"
+
 FILES_${PN} += "${systemd_unitdir}/system/"
 FILES_${PN} += "${sysconfdir}/udev/rules.d/"
 
