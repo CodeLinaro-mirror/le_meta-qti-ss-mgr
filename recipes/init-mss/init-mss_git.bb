@@ -63,11 +63,7 @@ do_install() {
 
 
             # Add sleep for mdm targets to ensure full CPU is available to load modem.
-            if ${@bb.utils.contains_any('DISTRO_NAME', 'auto', 'true', 'false', d)}; then
-                sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 12' ${D}${systemd_unitdir}/system/init_sys_mss.service
-            else
-                sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 11' ${D}${systemd_unitdir}/system/init_sys_mss.service
-            fi
+            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 12' ${D}${systemd_unitdir}/system/init_sys_mss.service
             install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
             ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
         else
