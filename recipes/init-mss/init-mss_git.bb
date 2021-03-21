@@ -16,18 +16,8 @@ SRC_URI += "file://init_mss.conf"
 S = "${WORKDIR}/init_mss"
 
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
-EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_qti-distro-base = " --enable-indefinite-sleep"
-
-EXTRA_OECONF_append_qcs40x = " --enable-indefinite-sleep=yes"
-EXTRA_OECONF_append_qcs40x = " --enable-wcnss=yes"
-
+EXTRA_OECONF_append = " --enable-indefinite-sleep"
 EXTRA_OECONF_append = " --enable-modem"
-
-# QCS40x has wcnss but not modem
-EXTRA_OECONF_remove_qcs40x = "--enable-modem"
 
 FILES_${PN} += "${systemd_unitdir}/system/"
 FILES_${PN} += "${sysconfdir}/udev/rules.d/"
@@ -45,7 +35,8 @@ do_install() {
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
         install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
         install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
-        if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)}; then
+        if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)} or
+           ${@bb.utils.contains('MACHINE_FEATURES', 'qti-sdx', 'true', 'false', d)}; then
            #ADD NAND CHECK IF REQUIRED.
            # Clear the values of After, Requires and WantedBy.
            sed -i '/After/s/firmware.mount//' ${D}${systemd_unitdir}/system/init_sys_mss.service
@@ -63,7 +54,7 @@ do_install() {
 
 
             # Add sleep for mdm targets to ensure full CPU is available to load modem.
-            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 11' ${D}${systemd_unitdir}/system/init_sys_mss.service
+            sed -i '/RemainAfterExit=yes/a ExecStartPost=+sleep 12' ${D}${systemd_unitdir}/system/init_sys_mss.service
             install -d ${D}${systemd_unitdir}/system/sockets.target.wants/
             ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sockets.target.wants/init_sys_mss.service
         else
