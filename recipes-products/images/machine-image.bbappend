@@ -1,6 +1,3 @@
-#  Following is the order of priority for inclusion.
-#  P1: <basemachine>/<basemachine>-<distro>-ss-mgr-image.inc
-#  P2: <basemachine>/<basemachine>-ss-mgr-image.inc
-#  P3: common/common-ss-mgr-image.inc
-include ${@get_bblayer_img_inc('ss-mgr', d)}
-
+# SS-MGR Open source Packages
+IMAGE_INSTALL += "init-mss"
+IMAGE_INSTALL += "${@bb.utils.contains_any('VARIANT', 'user', '', 'reboot-daemon', d)}"
