@@ -1,0 +1,1 @@
+QTISSMGR:=initmss reboot-daemon
