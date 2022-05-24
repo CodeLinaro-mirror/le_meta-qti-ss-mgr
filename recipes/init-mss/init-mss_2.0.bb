@@ -3,7 +3,6 @@ inherit autotools-brokensep update-rc.d systemd
 DESCRIPTION = "Modem init"
 LICENSE = "BSD"
 LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD;md5=3775480a712fc46a69647678acb234cb"
-PR = "r7"
 
 FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
 FILESEXTRAPATHS_prepend := "${THISDIR}/init_mss:"
