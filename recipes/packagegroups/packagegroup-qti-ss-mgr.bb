@@ -19,6 +19,9 @@ EARLY_SS_INIT_waipio ?= ""
 RBDAEMON = "reboot-daemon"
 RBDAEMON_qti-distro-user = ""
 
+# Disable reboot-daemon for waipio based targets
+RBDAEMON_waipio = ""
+
 # Daemons needed for subsystem management
 RDEPENDS_${PN} = "\
     ${EARLY_SS_INIT} \
