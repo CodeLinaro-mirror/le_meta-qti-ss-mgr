@@ -1,6 +1,6 @@
-#!/bin/sh /etc/rc.common
+#!/bin/sh
 
-#Copyright (c) 2021-2022 Qualcomm Innovation Center, Inc. All rights reserved.
+#Copyright (c) 2022 Qualcomm Innovation Center, Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted (subject to the limitations in the
@@ -32,21 +32,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-START=15
-STOP=84
-
-USE_PROCD=1
-PROCD_DEBUG=1
-
-start_service() {
-        procd_open_instance
-	procd_set_param command /usr/bin/init_mss
-	procd_set_param user system
-	procd_set_param group system
-        procd_close_instance
-}
-
-stop_service() {
-        echo "Stopping init_mss service"
-        # commands to kill application
-}
+if [ "$ACTION" = "add" ]; then
+	chown system:system /dev/subsys_modem
+	chmod 0644 /dev/subsys_modem
+fi
