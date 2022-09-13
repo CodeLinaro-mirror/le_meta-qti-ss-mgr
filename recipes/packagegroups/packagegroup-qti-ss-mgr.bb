@@ -16,6 +16,6 @@ RBDAEMON_qti-distro-user = ""
 
 # Daemons needed for subsystem management
 RDEPENDS_${PN} = "\
-    init-mss \
+    ${@bb.utils.contains("MACHINE_FEATURES", "qti-remoteproc", "", "init-mss", d)} \
     ${RBDAEMON} \
 "
