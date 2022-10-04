@@ -33,6 +33,10 @@
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if [ "$ACTION" = "add" ]; then
-	chown system:system /dev/subsys_modem
-	chmod 0644 /dev/subsys_modem
+	if [ "$SUBSYSTEM" = "subsys" ]; then
+		if [ "$DEVICENAME" = "subsys_modem" ]; then
+			chown system:system /dev/$DEVICENAME
+			chmod 0644 /dev/$DEVICENAME
+		fi
+	fi
 fi
