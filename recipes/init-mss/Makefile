@@ -36,9 +36,7 @@ define Build/Prepare
 endef
 
 define Package/initmss/install
-	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/firmware
-	$(CP) $(PKG_BUILD_DIR)/init_mss $(1)/usr/bin/
 	$(INSTALL_DIR) $(1)/etc/init.d
 	$(INSTALL_BIN) ./init-mss/init-mss.init $(1)/etc/init.d/
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/subsys
