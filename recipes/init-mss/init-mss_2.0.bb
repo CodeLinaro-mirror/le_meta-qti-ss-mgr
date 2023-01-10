@@ -1,11 +1,13 @@
 inherit autotools-brokensep update-rc.d systemd
 
 DESCRIPTION = "Modem init"
-LICENSE = "BSD"
-LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD;md5=3775480a712fc46a69647678acb234cb"
+LICENSE = "BSD-3-Clause"
+LIC_FILES_CHKSUM = " \
+    file://${COMMON_LICENSE_DIR}/BSD-3-Clause;md5=550794465ba0ec5312d6919e203a55f9 \
+"
 
-FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
-FILESEXTRAPATHS_prepend := "${THISDIR}/init_mss:"
+FILESEXTRAPATHS:prepend := "${WORKSPACE}/mdm-ss-mgr:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/init_mss:"
 
 SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
@@ -15,27 +17,27 @@ SRC_URI += "file://init_mss.conf"
 S = "${WORKDIR}/init_mss"
 
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
-EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxnightjar = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_qti-distro-base = " --enable-indefinite-sleep"
+EXTRA_OECONF:append:msm = " --enable-indefinite-sleep"
+EXTRA_OECONF:append:sdxpoorwills = " --enable-indefinite-sleep"
+EXTRA_OECONF:append:sdxprairie = " --enable-indefinite-sleep"
+EXTRA_OECONF:append:sdxnightjar = " --enable-indefinite-sleep"
+EXTRA_OECONF:append:qti-distro-base = " --enable-indefinite-sleep"
 
-EXTRA_OECONF_append_qcs40x = " --enable-indefinite-sleep=yes"
-EXTRA_OECONF_append_qcs40x = " --enable-wcnss=yes"
+EXTRA_OECONF:append:qcs40x = " --enable-indefinite-sleep=yes"
+EXTRA_OECONF:append:qcs40x = " --enable-wcnss=yes"
 
-EXTRA_OECONF_append = " --enable-modem"
+EXTRA_OECONF:append = " --enable-modem"
 
 # QCS40x has wcnss but not modem
-EXTRA_OECONF_remove_qcs40x = "--enable-modem"
+EXTRA_OECONF:remove:qcs40x = "--enable-modem"
 
-FILES_${PN} += "${systemd_unitdir}/system/"
-FILES_${PN} += "${sysconfdir}/udev/rules.d/"
+FILES:${PN} += "${systemd_unitdir}/system/"
+FILES:${PN} += "${sysconfdir}/udev/rules.d/"
 
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
-INITSCRIPT_PARAMS_sdxpoorwills = "start 31 S ."
-INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
+INITSCRIPT_PARAMS:sdxpoorwills = "start 31 S ."
+INITSCRIPT_PARAMS:sdxprairie = "start 31 S ."
 
 do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss

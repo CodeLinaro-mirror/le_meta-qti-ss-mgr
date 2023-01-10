@@ -12,18 +12,18 @@ PACKAGES = ' \
 
 # Decide if early init of subsystems is needed.
 EARLY_SS_INIT ?= "init-mss"
-EARLY_SS_INIT_waipio ?= ""
+EARLY_SS_INIT:waipio ?= ""
 
 
 # Don't install reboot-daemon for user builds.
 RBDAEMON = "reboot-daemon"
-RBDAEMON_qti-distro-user = ""
+RBDAEMON:qti-distro-user = ""
 
 # Disable reboot-daemon for waipio based targets
-RBDAEMON_waipio = ""
+RBDAEMON:waipio = ""
 
 # Daemons needed for subsystem management
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
     ${EARLY_SS_INIT} \
     ${RBDAEMON} \
 "
