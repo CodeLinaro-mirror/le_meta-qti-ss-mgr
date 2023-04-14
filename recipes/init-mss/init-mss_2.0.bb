@@ -13,6 +13,7 @@ SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
+SRC_URI += "file://init_rproc_mss.service"
 
 S = "${WORKDIR}/init_mss"
 
@@ -27,6 +28,9 @@ EXTRA_OECONF:append:qcs40x = " --enable-indefinite-sleep=yes"
 EXTRA_OECONF:append:qcs40x = " --enable-wcnss=yes"
 
 EXTRA_OECONF:append = " --enable-modem"
+
+EXTRA_OECONF:remove:kalama = " --enable-modem"
+EXTRA_OECONF:remove:kalama = " --enable-wcnss"
 
 # QCS40x has wcnss but not modem
 EXTRA_OECONF:remove:qcs40x = "--enable-modem"
@@ -45,6 +49,7 @@ do_install() {
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${sysconfdir}/udev/rules.d/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_rproc_mss.service
         install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
         install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
         if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)}; then
@@ -80,3 +85,5 @@ do_install() {
         install -m 0755 ${S}/start_mss -D ${D}${sysconfdir}/init.d/init_sys_mss
     fi
 }
+
+SYSTEMD_SERVICE:${PN} = "init_rproc_mss.service"
