@@ -12,6 +12,7 @@ SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
+SRC_URI += "file://init_sys_mss_remoteproc.service"
 
 S = "${WORKDIR}/init_mss"
 
@@ -36,6 +37,17 @@ INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
 INITSCRIPT_PARAMS_sdxpoorwills = "start 31 S ."
 INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
+
+do_compile_sdxpinn[noexec] = "1"
+
+do_install_sdxpinn() {
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+        install -d ${D}${systemd_unitdir}/system/
+        install -m 0644 ${WORKDIR}/init_sys_mss_remoteproc.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
+        ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
+    fi
+}
 
 do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
