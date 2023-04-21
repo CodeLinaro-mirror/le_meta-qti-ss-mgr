@@ -1,0 +1,19 @@
+# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+[Unit]
+Description=Service to trigger modem load based on remoteproc
+After=firmware-mount.service
+Requires=firmware-mount.service
+Before=local-fs.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state'
+ExecStop=/bin/sh -c 'echo stop > /sys/class/remoteproc/remoteproc0/state'
+Nice=-20
+
+[Install]
+WantedBy=local-fs.target
