@@ -4,7 +4,7 @@
 [Unit]
 Description=Modem Init Service
 After=firmware.mount
-BindsTo=rmt-storage.service
+BindsTo=rmt_storage.service
 Requires=firmware.mount
 
 [Service]
