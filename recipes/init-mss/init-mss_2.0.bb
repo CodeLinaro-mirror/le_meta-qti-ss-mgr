@@ -85,7 +85,7 @@ do_install() {
     fi
 }
 
-do_install:append:kalama() {
+do_install:kalama() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
