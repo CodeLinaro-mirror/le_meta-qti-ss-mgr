@@ -13,6 +13,7 @@ SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
+SRC_URI += "file://init_rproc_mss.service"
 
 S = "${WORKDIR}/init_mss"
 
@@ -27,6 +28,9 @@ EXTRA_OECONF:append:qcs40x = " --enable-indefinite-sleep=yes"
 EXTRA_OECONF:append:qcs40x = " --enable-wcnss=yes"
 
 EXTRA_OECONF:append = " --enable-modem"
+
+EXTRA_OECONF:remove:kalama = " --enable-modem"
+EXTRA_OECONF:remove:kalama = " --enable-wcnss"
 
 # QCS40x has wcnss but not modem
 EXTRA_OECONF:remove:qcs40x = "--enable-modem"
@@ -80,3 +84,11 @@ do_install() {
         install -m 0755 ${S}/start_mss -D ${D}${sysconfdir}/init.d/init_sys_mss
     fi
 }
+
+do_install:append:kalama() {
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+	fi
+}
+
+SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
