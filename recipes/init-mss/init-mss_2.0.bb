@@ -49,7 +49,6 @@ do_install() {
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${sysconfdir}/udev/rules.d/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
-        install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_rproc_mss.service
         install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
         install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
         if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)}; then
@@ -86,4 +85,10 @@ do_install() {
     fi
 }
 
-SYSTEMD_SERVICE:${PN} = "init_rproc_mss.service"
+do_install:append:kalama() {
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+	fi
+}
+
+SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
