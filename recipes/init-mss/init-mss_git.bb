@@ -12,6 +12,7 @@ SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
+SRC_URI += "file://init_sys_mss_rproc.service"
 
 S = "${WORKDIR}/init_mss"
 
@@ -27,9 +28,20 @@ INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
 INITSCRIPT_PARAMS_sdxpoorwills = "start 31 S ."
 INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
 
+# Package for init-mss-rproc
+PACKAGES =+ "init-mss-rproc"
+FILES_init-mss-rproc = "${systemd_unitdir}/system/init_sys_mss_rproc.service ${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss_rproc.service"
+
 do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+
+        # Place service in systemd unitdir
+        install -d ${D}${systemd_unitdir}/system/
+        install -m 0644 ${WORKDIR}/init_sys_mss_rproc.service -D ${D}${systemd_unitdir}/system/init_sys_mss_rproc.service
+	install -d ${D}${systemd_unitdir}/system/local-fs.target.wants/
+	ln -sf ${systemd_unitdir}/system/init_sys_mss_rproc.service ${D}${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss_rproc.service
+
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${sysconfdir}/udev/rules.d/
         install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
