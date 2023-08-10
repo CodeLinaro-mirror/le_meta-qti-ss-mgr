@@ -1,0 +1,10 @@
+[Unit]
+Description=Journald Logger Timer
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=5min
+Unit=csm-logger.service
+
+[Install]
+WantedBy=timers.target
