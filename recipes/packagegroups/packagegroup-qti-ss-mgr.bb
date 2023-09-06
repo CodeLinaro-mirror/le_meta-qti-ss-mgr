@@ -21,5 +21,6 @@ INIT_MSS_RPROC_sa525m = 'True'
 # Daemons needed for subsystem management
 RDEPENDS_${PN} = "\
     ${@bb.utils.contains("MACHINE_FEATURES", "qti-remoteproc", "", oe.utils.conditional('INIT_MSS_RPROC', 'True', 'init-mss-rproc', 'init-mss', d), d)} \
+    ${@bb.utils.contains("MACHINE_FEATURES", "qti-csm", "csm-logger rsync", "", d)} \
     ${RBDAEMON} \
 "
