@@ -1,0 +1,9 @@
+[Unit]
+Description=Journald Collector
+
+[Service]
+Type=oneshot
+ExecStart=/etc/csm-logger.sh
+
+[Install]
+WantedBy=multi-user.target
