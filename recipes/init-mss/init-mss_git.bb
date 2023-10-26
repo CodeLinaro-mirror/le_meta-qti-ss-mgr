@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD;md5=377548
 PR = "r7"
 
 FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
-FILESEXTRAPATHS_prepend := "${THISDIR}/init_mss:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/init_mss:"
 
 SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
@@ -17,11 +17,11 @@ SRC_URI += "file://init_sys_mss_rproc.service"
 S = "${WORKDIR}/init_mss"
 
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
-EXTRA_OECONF_append = " --enable-indefinite-sleep"
-EXTRA_OECONF_append = " --enable-modem"
+EXTRA_OECONF:append = " --enable-indefinite-sleep"
+EXTRA_OECONF:append = " --enable-modem"
 
-FILES_${PN} += "${systemd_unitdir}/system/"
-FILES_${PN} += "${sysconfdir}/udev/rules.d/"
+FILES:${PN} += "${systemd_unitdir}/system/"
+FILES:${PN} += "${sysconfdir}/udev/rules.d/"
 
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
@@ -30,7 +30,7 @@ INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
 
 # Package for init-mss-rproc
 PACKAGES =+ "init-mss-rproc"
-FILES_init-mss-rproc = "${systemd_unitdir}/system/init_sys_mss_rproc.service ${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss_rproc.service"
+FILES:init-mss-rproc = "${systemd_unitdir}/system/init_sys_mss_rproc.service ${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss_rproc.service"
 
 do_install() {
     install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
