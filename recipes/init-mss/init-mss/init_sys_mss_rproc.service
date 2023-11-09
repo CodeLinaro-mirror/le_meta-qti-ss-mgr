@@ -13,7 +13,6 @@ Conflicts=shutdown.target
 Type=oneshot
 RemainAfterExit=yes
 ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state'
-ExecStop=/bin/sh -c 'echo stop > /sys/class/remoteproc/remoteproc0/state'
 Nice=-20
 
 [Install]
