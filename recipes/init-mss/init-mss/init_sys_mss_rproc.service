@@ -7,6 +7,7 @@ After=firmware-mount.service
 Requires=firmware-mount.service
 Before=local-fs.target
 DefaultDependencies=no
+Conflicts=shutdown.target
 
 [Service]
 Type=oneshot
