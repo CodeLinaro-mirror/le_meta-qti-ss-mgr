@@ -42,6 +42,9 @@ do_install() {
         # Place service in systemd unitdir
         install -d ${D}${systemd_unitdir}/system/
         install -m 0644 ${WORKDIR}/init_sys_mss_rproc.service -D ${D}${systemd_unitdir}/system/init_sys_mss_rproc.service
+        if [ "${MACHINE}" == "mdm9607" ]; then
+            sed -i "/ExecStart=.*/a ExecStop=/bin/sh -c 'echo 0 > /sys/kernel/boot_adsp/boot'" ${D}${systemd_unitdir}/system/init_sys_mss_rproc.service
+        fi
 	install -d ${D}${systemd_unitdir}/system/local-fs.target.wants/
 	ln -sf ${systemd_unitdir}/system/init_sys_mss_rproc.service ${D}${systemd_unitdir}/system/local-fs.target.wants/init_sys_mss_rproc.service
 
