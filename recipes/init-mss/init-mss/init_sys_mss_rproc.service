@@ -9,8 +9,7 @@ Requires=firmware-mount.service
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state'
-ExecStop=/bin/sh -c 'echo stop > /sys/class/remoteproc/remoteproc0/state'
+ExecStart= /bin/sh -c ' for d in /sys/class/remoteproc/remoteproc*/; do if [ \"$(cat \"$d/name\")\" ==  \"4080000.remoteproc-mss\" ]; then echo start > $d/state; fi; done '
 
 [Install]
 WantedBy=multi-user.target
