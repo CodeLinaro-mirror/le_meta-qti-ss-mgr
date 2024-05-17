@@ -32,13 +32,8 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
 # IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if [ -e "/etc/data/mbim_early_init" ]; then
-    START=04
-    STOP=95
-else
-    START=15
-    STOP=84
-fi
+START=15
+STOP=84
 
 start() {
     echo start > /sys/class/remoteproc/remoteproc0/state

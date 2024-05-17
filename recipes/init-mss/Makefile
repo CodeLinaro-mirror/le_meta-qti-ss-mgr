@@ -38,11 +38,7 @@ endef
 define Package/initmss/install
 	$(INSTALL_DIR) $(1)/firmware
 	$(INSTALL_DIR) $(1)/etc/init.d
-ifeq ($(BOARD), sdx35)
-	$(INSTALL_BIN) ./init-mss/sdx35-init-mss.init $(1)/etc/init.d/init-mss.init
-else ifeq ($(BOARD), sdx75)
-	$(INSTALL_BIN) ./init-mss/sdx75-init-mss.init $(1)/etc/init.d/init-mss.init
-endif
+	$(INSTALL_BIN) ./init-mss/init-mss.init $(1)/etc/init.d/
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/subsys
 	$(INSTALL_DATA) ./init-mss/15-init-mss $(1)/etc/hotplug.d/subsys/
 endef
