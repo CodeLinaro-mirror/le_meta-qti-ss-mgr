@@ -4,7 +4,7 @@ PKG_NAME:=reboot-daemon
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 PKG_FIXUP:=autoreconf
-
+PKG_LICENSE:=BSD
 LOCAL_SRC := $(TOPDIR)/src/mdm-ss-mgr/$(PKG_NAME)
 
 include $(INCLUDE_DIR)/package.mk

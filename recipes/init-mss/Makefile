@@ -6,7 +6,7 @@ PKG_NAME:=initmss
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 PKG_FIXUP:=autoreconf
-
+PKG_LICENSE:=BSD
 # Source settings (i.e. where to find the source codes)
 # This is a custom variable, used below
 SOURCE_DIR:=$(TOPDIR)/src/mdm-ss-mgr/init_mss
@@ -42,6 +42,8 @@ ifeq ($(BOARD), sdx35)
 	$(INSTALL_BIN) ./init-mss/sdx35-init-mss.init $(1)/etc/init.d/init-mss.init
 else ifeq ($(BOARD), sdx75)
 	$(INSTALL_BIN) ./init-mss/sdx75-init-mss.init $(1)/etc/init.d/init-mss.init
+else ifeq ($(BOARD), sdx85)
+	$(INSTALL_BIN) ./init-mss/sdx85-init-mss.init $(1)/etc/init.d/init-mss.init
 endif
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/subsys
 	$(INSTALL_DATA) ./init-mss/15-init-mss $(1)/etc/hotplug.d/subsys/
