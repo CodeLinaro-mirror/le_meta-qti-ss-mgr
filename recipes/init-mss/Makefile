@@ -6,7 +6,7 @@ PKG_NAME:=initmss
 PKG_VERSION:=1.0
 PKG_RELEASE:=1
 PKG_FIXUP:=autoreconf
-
+PKG_LICENSE:=BSD
 # Source settings (i.e. where to find the source codes)
 # This is a custom variable, used below
 SOURCE_DIR:=$(TOPDIR)/src/mdm-ss-mgr/init_mss
