@@ -101,7 +101,9 @@ do_install:append:sa525m(){
                 sed -i '/After=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/After=firmware-mount.service/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/After=firmware-mount.service/a Requires=firmware-mount.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
+          if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
 		sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
+          fi
                 sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
 }
