@@ -44,7 +44,7 @@ INITSCRIPT_PARAMS:sdxpoorwills = "start 31 S ."
 INITSCRIPT_PARAMS:sdxprairie = "start 31 S ."
 
 do_install() {
-    install -m 0755 ${S}/init_mss -D ${D}/sbin/init_mss
+    install -m 0755 ${S}/init_mss -D ${D}/${base_sbindir}/init_mss
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${sysconfdir}/udev/rules.d/
