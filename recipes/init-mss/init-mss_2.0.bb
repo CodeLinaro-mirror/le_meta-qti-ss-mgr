@@ -91,4 +91,20 @@ do_install:kalama() {
 	fi
 }
 
+do_install:append:sa525m(){
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+
+                sed -i '/WantedBy/s/multi-user.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
+                sed -i '/After=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/After=firmware-mount.service/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/After=firmware-mount.service/a Requires=firmware-mount.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
+		sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
+	fi
+}
+
 SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
+SYSTEMD_SERVICE:${PN}:sa525m = "init_sys_mss.service"
