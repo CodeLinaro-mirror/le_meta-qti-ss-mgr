@@ -122,7 +122,7 @@ do_install:append:sa510m(){
           if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
                 sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
           fi
-                sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/RemainAfterExit/a Nice=-5' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i "/ExecStart=/ c ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state' " ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
