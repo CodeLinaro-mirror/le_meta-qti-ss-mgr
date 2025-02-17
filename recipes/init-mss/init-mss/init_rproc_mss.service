@@ -36,7 +36,7 @@ After=firmware-mount.service
 
 [Service]
 Type = oneshot
-ExecStart= /bin/sh -c ' for d in /sys/class/remoteproc/remoteproc*/; do if [ \"$(cat \"$d/name\")\" ==  \"4080000.remoteproc-mss\" ]; then echo start > $d/state; fi; done '
+ExecStart= /bin/sh -c ' for d in /sys/class/remoteproc/remoteproc*/; do if [ \"$(cat \"$d/name\")\" ==  \"6080000.remoteproc-mss\" ]; then echo start > $d/state; fi; done '
 RemainAfterExit=yes
 
 [Install]
