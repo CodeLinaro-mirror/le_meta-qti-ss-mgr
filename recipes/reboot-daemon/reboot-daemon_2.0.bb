@@ -17,7 +17,7 @@ EXTRA_OEMAKE:append = " CROSS=${HOST_PREFIX}"
 FILES:${PN} += "${systemd_unitdir}/system/"
 
 do_install() {
-    install -m 0755 ${S}/reboot-daemon -D ${D}/sbin/reboot-daemon
+    install -m 0755 ${S}/reboot-daemon -D ${D}/${base_sbindir}/reboot-daemon
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
       install -d ${D}${systemd_unitdir}/system/
       install -m 0644 ${WORKDIR}/reboot-daemon.service -D ${D}${systemd_unitdir}/system/reboot-daemon.service
