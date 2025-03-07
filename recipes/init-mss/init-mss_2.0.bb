@@ -98,12 +98,6 @@ do_install:pineapple() {
 	fi
 }
 
-do_install:qcm2290-mtp(){
-        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
-        fi
-}
-
 do_install:append:sa525m(){
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
@@ -144,4 +138,3 @@ do_install:append:sa510m(){
 SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa525m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa510m = "init_sys_mss.service"
-SYSTEMD_SERVICE:${PN}:qcm2290-mtp = "init_sys_mss.service"
