@@ -98,6 +98,13 @@ do_install:qcm2290-mtp(){
         fi
 }
 
+do_install:qcm2290-mtp(){
+        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
+        fi
+}
+
 do_install:append:sa525m(){
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
