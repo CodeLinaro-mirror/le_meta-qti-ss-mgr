@@ -14,6 +14,7 @@ SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
 SRC_URI += "file://init_rproc_mss.service"
+SRC_URI += "file://modem-load-mgr.sh"
 
 S = "${WORKDIR}/init_mss"
 
@@ -91,6 +92,26 @@ do_install:kalama() {
 	fi
 }
 
+do_install:pineapple() {
+	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+	fi
+}
+
+do_install:qcm2290-mtp(){
+        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
+        fi
+}
+
+do_install:qcm4325-mtp(){
+        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
+        fi
+}
+
 do_install:append:sa525m(){
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
@@ -104,8 +125,9 @@ do_install:append:sa525m(){
           if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
 		sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
           fi
+                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+                sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i "/ExecStart=/ c ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state' " ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
 }
 
@@ -130,3 +152,6 @@ do_install:append:sa510m(){
 SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa525m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa510m = "init_sys_mss.service"
+SYSTEMD_SERVICE:${PN}:qcm2290-mtp = "init_sys_mss.service"
+SYSTEMD_SERVICE:${PN}:qcm4325-mtp = "init_sys_mss.service"
+
