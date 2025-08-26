@@ -104,6 +104,12 @@ do_install:qcm2290-mtp(){
 		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
+do_install:qcs610-odk-64(){
+        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"4080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
+        fi
+}
 
 do_install:qcm4325-mtp(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
@@ -154,4 +160,5 @@ SYSTEMD_SERVICE:${PN}:sa525m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa510m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:qcm2290-mtp = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:qcm4325-mtp = "init_sys_mss.service"
+SYSTEMD_SERVICE:${PN}:qcs610-odk-64 = "init_sys_mss.service"
 
