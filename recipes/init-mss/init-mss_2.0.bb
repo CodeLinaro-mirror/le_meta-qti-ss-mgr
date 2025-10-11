@@ -143,15 +143,20 @@ do_install:append:sa510m(){
                 install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
                 rm ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
 
+                #CLEAR the values
                 sed -i '/WantedBy/s/multi-user.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/After/s/firmware-mount.service//' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
+                # Add new values to After, Requires and WantedBy.
+                sed -i '/\<After\>/s/$/firmware-mount.service sysinit.target QCMAP_ConnectionManagerd.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/After=firmware-mount.service sysinit.target QCMAP_ConnectionManagerd.service/a Requires=firmware-mount.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/WantedBy/s/$/sockets.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
                 # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
-                sed -i '/After=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/After=firmware-mount.service/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/After=firmware-mount.service/a Requires=firmware-mount.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
-          if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
-                sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
-          fi
+                sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/DefaultDependencies=no/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
+                sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
+
                 sed -i '/RemainAfterExit/a Nice=-5' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i "/ExecStart=/ c ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state' " ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
