@@ -1,0 +1,21 @@
+#!/bin/sh /etc/rc.common
+
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+if [ -e "/etc/data/mbim_early_init" ]; then
+    START=04
+    STOP=95
+else
+    START=15
+    STOP=84
+fi
+
+start() {
+    echo start > /sys/class/remoteproc/remoteproc0/state
+}
+
+stop() {
+    echo "Stopping modem service"
+    echo stop > /sys/class/remoteproc/remoteproc0/state
+}
