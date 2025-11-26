@@ -194,8 +194,9 @@ do_install:append:sa510m(){
                 sed -i '/DefaultDependencies=no/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
+                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+                sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/RemainAfterExit/a Nice=-5' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i "/ExecStart=/ c ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state' " ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
 
