@@ -90,8 +90,7 @@ SlotSwitchReboot () {
     fi
 
     echo "Reboot for switching slots or EDL mode" > /dev/kmsg
-    echo "warm" > /sys/kernel/reboot/mode
-    /bin/sh -c 'reboot'
+    /bin/sh -c 'reboot system-abnormal'
 }
 
 
