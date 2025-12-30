@@ -46,6 +46,8 @@ else ifeq ($(BOARD), sdx85)
 	$(INSTALL_BIN) ./init-mss/sdx85-init-mss.init $(1)/etc/init.d/init-mss.init
 else ifeq ($(BOARD), sdxecho)
 	$(INSTALL_BIN) ./init-mss/sdxecho-init-mss.init $(1)/etc/init.d/init-mss.init
+else ifeq ($(BOARD), qmb415)
+	$(INSTALL_BIN) ./init-mss/qmb415-init-mss.init $(1)/etc/init.d/init-mss.init
 
 endif
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/subsys
