@@ -12,10 +12,14 @@ else
 fi
 
 start() {
+    echo "Starting Modem and CDSP service"
     echo start > /sys/class/remoteproc/remoteproc0/state
+    echo start > /sys/class/remoteproc/remoteproc1/state
+
 }
 
 stop() {
-    echo "Stopping modem service"
+    echo "Stopping Modem and CDSP service"
     echo stop > /sys/class/remoteproc/remoteproc0/state
+    echo stop > /sys/class/remoteproc/remoteproc1/state
 }
