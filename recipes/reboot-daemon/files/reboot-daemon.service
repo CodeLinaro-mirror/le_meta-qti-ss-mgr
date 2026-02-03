@@ -5,6 +5,8 @@ Description= reboot-daemon service
 [Service]
 Restart=always
 ExecStart=/sbin/reboot-daemon
+CapabilityBoundingSet=CAP_CHOWN
+AmbientCapabilities=CAP_CHOWN
 
 [Install]
 WantedBy=multi-user.target
