@@ -1,0 +1,42 @@
+#!/bin/sh /etc/rc.common
+
+#******************************************************************************
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+#******************************************************************************/
+
+if [ -e "/etc/data/mbim_early_init" ]; then
+    START=05
+    STOP=94
+else
+    START=16
+    STOP=83
+fi
+
+SERVICE_NAME="dump-level-monitor"
+DUMP_LEVEL="/sys/kernel/qcom_rproc/dump_level"
+LEVEL_COLLECTION_SCRIPT="/usr/bin/collect-dump-level.sh"
+
+
+USE_PROCD=1
+PROCD_DEBUG=1
+
+#inotifyd /usr/bin/collect-dump-level.sh /sys/kernel/qcom_rproc/dump_level:c
+
+start_service() {
+    if [ -f "$DUMP_LEVEL" ]; then
+        echo "Starting $SERVICE_NAME: monitoring $DUMP_LEVEL" >> /dev/kmsg
+
+        procd_open_instance
+        procd_set_param command inotifyd "$LEVEL_COLLECTION_SCRIPT" "$DUMP_LEVEL:c"
+        procd_set_param respawn
+        procd_close_instance
+    else
+        echo "Node $DUMP_LEVEL does not exist, exiting $SERVICE_NAME service !! " >> /dev/kmsg
+    fi
+}
+
+stop_service() {
+    echo "Stopping $SERVICE_NAME service" >> /dev/kmsg
+}
+
