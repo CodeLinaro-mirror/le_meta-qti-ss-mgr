@@ -11,6 +11,7 @@ FILESEXTRAPATHS:prepend := "${THISDIR}/init_mss:"
 
 SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
+SRC_URI += "file://init_sys_mss_auto.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
 SRC_URI += "file://init_rproc_mss.service"
@@ -126,36 +127,11 @@ do_install:qcm4325-mtp(){
 }
 
 do_install:append:sa535m(){
-        if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-
-		sed -i '/^After=/s/firmware-mount.service//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-		sed -i '/^After=/s/$/ firmware.mount tftp_server.service rmt_storage.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-                sed -i '/WantedBy/s/multi-user.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-
-                # Add new lines after "Requires=firmware.mount tftp_server.service" to set DefaultDependencies to no.
-                sed -i '/After= firmware.mount tftp_server.service rmt_storage.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/After= firmware.mount tftp_server.service rmt_storage.service/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/After= firmware.mount tftp_server.service rmt_storage.service/a Requires=firmware.mount tftp_server.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
-          if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
-		sed -i '/^After=/s/firmware.mount tftp_server.service rmt_storage.service//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-		sed -i '/^After=/s/$/ firmware_ubi_mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-                sed -i '/^Requires=/s/firmware.mount tftp_server.service//' ${D}${systemd_unitdir}/system/init_sys_mss.service
-		sed -i '/^Requires=/s/$/ firmware_ubi_mount.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
-
-                sed -i '/After=firmware_ubi_mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
-          fi
-                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
-                sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
-        fi
+    if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
+        install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+        install -m 0644 ${WORKDIR}/init_sys_mss_auto.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+    fi
 }
-
 do_install:append:sa525m(){
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
 		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
@@ -194,8 +170,9 @@ do_install:append:sa510m(){
                 sed -i '/DefaultDependencies=no/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
+                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+                sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/RemainAfterExit/a Nice=-5' ${D}${systemd_unitdir}/system/init_sys_mss.service
-                sed -i "/ExecStart=/ c ExecStart=/bin/sh -c 'echo start > /sys/class/remoteproc/remoteproc0/state' " ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
 
@@ -207,11 +184,11 @@ do_install:vienna(){
         fi
 }
 
+SYSTEMD_SERVICE:${PN}:sa535m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:kalama = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa525m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:sa510m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:vienna = "init_sys_mss.service"
-SYSTEMD_SERVICE:${PN}:sa535m = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:qcm2290-mtp = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:qcm4325-mtp = "init_sys_mss.service"
 SYSTEMD_SERVICE:${PN}:qcs610-odk-64 = "init_sys_mss.service"
