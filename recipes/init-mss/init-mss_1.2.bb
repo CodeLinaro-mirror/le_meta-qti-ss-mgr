@@ -6,7 +6,7 @@ LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD;md5=377548
 PR = "r7"
 
 FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
-FILESEXTRAPATHS_prepend := "${THISDIR}/init_mss:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/init_mss:"
 
 SRC_URI = "file://init_mss"
 SRC_URI += "file://init_sys_mss.service"
@@ -17,26 +17,26 @@ SRC_URI += "file://init_sys_mss_remoteproc.service"
 S = "${WORKDIR}/init_mss"
 
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
-EXTRA_OECONF_append_msm = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxpoorwills = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_sdxprairie = " --enable-indefinite-sleep"
-EXTRA_OECONF_append_qti-distro-base = " --enable-indefinite-sleep"
+EXTRA_OECONF:append_msm = " --enable-indefinite-sleep"
+EXTRA_OECONF:append_sdxpoorwills = " --enable-indefinite-sleep"
+EXTRA_OECONF:append_sdxprairie = " --enable-indefinite-sleep"
+EXTRA_OECONF:append_qti-distro-base = " --enable-indefinite-sleep"
 
-EXTRA_OECONF_append_qcs40x = " --enable-indefinite-sleep=yes"
-EXTRA_OECONF_append_qcs40x = " --enable-wcnss=yes"
+EXTRA_OECONF:append_qcs40x = " --enable-indefinite-sleep=yes"
+EXTRA_OECONF:append_qcs40x = " --enable-wcnss=yes"
 
-EXTRA_OECONF_append = " --enable-modem"
+EXTRA_OECONF:append = " --enable-modem"
 
 # QCS40x has wcnss but not modem
-EXTRA_OECONF_remove_qcs40x = "--enable-modem"
+EXTRA_OECONF:remove_qcs40x = "--enable-modem"
 
-FILES_${PN} += "${systemd_unitdir}/system/"
-FILES_${PN} += "${sysconfdir}/udev/rules.d/"
+FILES:${PN} += "${systemd_unitdir}/system/"
+FILES:${PN} += "${sysconfdir}/udev/rules.d/"
 
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
-INITSCRIPT_PARAMS_sdxpoorwills = "start 31 S ."
-INITSCRIPT_PARAMS_sdxprairie = "start 31 S ."
+INITSCRIPT_PARAMS:sdxpoorwills = "start 31 S ."
+INITSCRIPT_PARAMS:sdxprairie = "start 31 S ."
 
 do_compile_sdxpinn[noexec] = "1"
 

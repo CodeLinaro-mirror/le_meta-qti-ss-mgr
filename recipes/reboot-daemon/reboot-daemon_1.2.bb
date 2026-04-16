@@ -12,8 +12,8 @@ SRC_URI += "file://reboot-daemon.service"
 
 S = "${WORKDIR}/reboot-daemon"
 
-EXTRA_OEMAKE_append = " CROSS=${HOST_PREFIX}"
-FILES_${PN} += "${systemd_unitdir}/system/"
+EXTRA_OEMAKE:append = " CROSS=${HOST_PREFIX}"
+FILES:${PN} += "${systemd_unitdir}/system/"
 
 do_install() {
     install -m 0755 ${S}/reboot-daemon -D ${D}/sbin/reboot-daemon
