@@ -59,6 +59,7 @@ do_install() {
 
            # Add new lines after "Requires=firmware-mount.service" to set DefaultDependencies to no.
            sed -i '/Requires=firmware-mount.service/a DefaultDependencies=no' ${D}${systemd_unitdir}/system/init_sys_mss.service
+           sed -i '/DefaultDependencies=no/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
            sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
 
