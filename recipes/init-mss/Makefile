@@ -47,8 +47,8 @@ else ifeq ($(BOARD), sdx85)
 	$(INSTALL_BIN) ./init-mss/dump-level-monitor.init $(1)/etc/init.d/dump-level-monitor.init
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) ./init-mss/collect-dump-level.sh $(1)/usr/bin/collect-dump-level.sh
-else ifeq ($(BOARD), sdxecho)
-	$(INSTALL_BIN) ./init-mss/sdxecho-init-mss.init $(1)/etc/init.d/init-mss.init
+else ifeq ($(BOARD), echo)
+	$(INSTALL_BIN) ./init-mss/echo-init-mss.init $(1)/etc/init.d/init-mss.init
 
 endif
 	$(INSTALL_DIR) $(1)/etc/hotplug.d/subsys

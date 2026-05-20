@@ -15,7 +15,7 @@ RBDAEMON = "reboot-daemon"
 RBDAEMON_qti-distro-user = ""
 
 # Daemons needed for subsystem management
-RDEPENDS_${PN} = "\
+RDEPENDS:${PN} = "\
     init-mss \
     ${RBDAEMON} \
 "
