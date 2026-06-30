@@ -1,5 +1,21 @@
-# Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries. 
 # SPDX-License-Identifier: BSD-3-Clause-Clear
+
+# -----------------------------------------------------------------------------
+# Modem/CDSP Remoteproc Boot Initialization
+#
+#
+# - All supported targets expose remoteproc0, used to bring up the modem
+#   subsystem during early boot.
+# - The echo target additionally exposes remoteproc1, used to bring up the
+#   CDSP subsystem during early boot.
+#
+# To keep a single service file compatible across all targets, remoteproc0
+# is always started, while remoteproc1 is started only when its sysfs 'state'
+# node is present and writable. This prevents the service from failing on
+# targets that do not provide remoteproc1.
+# -----------------------------------------------------------------------------
+
 
 [Unit]
 Description=Modem Init Service
@@ -10,7 +26,12 @@ Requires=firmware.mount
 [Service]
 Restart=on-failure
 RemainAfterExit=yes
-ExecStart=/bin/sh -c 'echo "start" > /sys/class/remoteproc/remoteproc0/state'
+ExecStart=/bin/sh -c '\
+  echo start > /sys/class/remoteproc/remoteproc0/state; \
+  if [ -w /sys/class/remoteproc/remoteproc1/state ]; then \
+    echo start > /sys/class/remoteproc/remoteproc1/state; \
+  fi \
+'
 Nice=-5
 
 [Install]
