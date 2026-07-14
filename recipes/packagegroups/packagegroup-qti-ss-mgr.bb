@@ -13,6 +13,7 @@ PACKAGES = ' \
 # Decide if early init of subsystems is needed.
 EARLY_SS_INIT ?= "init-mss"
 EARLY_SS_INIT:waipio ?= ""
+EARLY_SS_INIT:vienna ?= ""
 
 
 # Don't install reboot-daemon for user builds.
