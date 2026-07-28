@@ -13,6 +13,10 @@ SRC_URI += "file://init_sys_mss.service"
 SRC_URI += "file://init_mss.rules"
 SRC_URI += "file://init_mss.conf"
 SRC_URI += "file://init_sys_mss_remoteproc.service"
+SRC_URI:append:echo = " file://dump-level-monitor.service"
+SRC_URI:append:echo = " file://dump-level-monitor.path"
+SRC_URI:append:echo = " file://collect-dump-level.sh"
+SRC_URI:append:echo = " file://systemrw-dump_level.service.d/wait-systemrw.conf"
 
 S = "${WORKDIR}/init_mss"
 
@@ -32,6 +36,7 @@ EXTRA_OECONF:remove_qcs40x = "--enable-modem"
 
 FILES:${PN} += "${systemd_unitdir}/system/"
 FILES:${PN} += "${sysconfdir}/udev/rules.d/"
+FILES:${PN}:append:echo = " ${sysconfdir}/dump_level"
 
 INITSCRIPT_NAME = "init_sys_mss"
 INITSCRIPT_PARAMS = "start 38 2 3 4 5 ."
@@ -46,6 +51,14 @@ do_install:echo() {
         install -m 0644 ${WORKDIR}/init_sys_mss_remoteproc.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
         install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
         ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
+        install -m 0644 ${WORKDIR}/dump-level-monitor.service -D ${D}${systemd_unitdir}/system/dump-level-monitor.service
+        install -m 0644 ${WORKDIR}/dump-level-monitor.path -D ${D}${systemd_unitdir}/system/dump-level-monitor.path
+        install -m 0755 ${WORKDIR}/collect-dump-level.sh -D ${D}${bindir}/collect-dump-level.sh
+        install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
+        ln -sf ${systemd_unitdir}/system/dump-level-monitor.path ${D}/${systemd_unitdir}/system/sysinit.target.wants/dump-level-monitor.path
+        install -m 0644 ${WORKDIR}/systemrw-dump_level.service.d/wait-systemrw.conf -D ${D}${systemd_unitdir}/system/systemrw-dump_level.service.d/wait-systemrw.conf
+        install -d ${D}${sysconfdir}
+        install -m 0644 /dev/null ${D}${sysconfdir}/dump_level
     fi
 }
 
