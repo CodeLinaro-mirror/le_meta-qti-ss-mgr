@@ -3,13 +3,41 @@
 # SPDX-License-Identifier: BSD-3-Clause-Clear
 
 STATE_OFFLINE="offline"
+STATUS_ERR=1
+STATUS_INVAL=-1
+RECINFO_PART_NAME="recoveryinfo"
+EMMC_DIR=/dev/block/bootdevice/by-name
 
 IsGPIOEnabled () {
     gpio_enable_status=`cat /proc/cmdline | awk -F'recoveryinfo_gpio=' '{print $2}' | awk '{print $1}' | tr -d '"'`
     return ${gpio_enable_status}
 }
 
+EmmcGetPartitionID() {
+    DEV_NUM=-1
+    local PART_NAME=$1
+    local PATH_BY_NAME="${EMMC_DIR}/${PART_NAME}"
+    local DEV_NODE
+
+    # Check if by-name symlink exists
+    if [ ! -L "${PATH_BY_NAME}" ]; then
+        echo "Error: ${PART_NAME} not found in ${EMMC_DIR}" > /dev/kmsg
+        return ${STATUS_ERR}
+    fi
+
+    # Resolve symlink to get actual device node e.g. /dev/mmcblk0p10
+    DEV_NODE=$(readlink -f "${PATH_BY_NAME}")
+    if [ -z "${DEV_NODE}" ]; then
+        echo "Error: Cannot resolve symlink for ${PART_NAME}" > /dev/kmsg
+        return ${STATUS_ERR}
+    fi
+
+    # Extract partition number from device node name e.g. mmcblk0p10 → 10
+    DEV_NUM=$(echo "${DEV_NODE}" | grep -o '[0-9]*$')
+}
+
 SlotSwitchReboot () {
+    DEV_NUM=-1
     local abctl_cmd="/usr/bin/nad-abctl"
     # Set image_set_status fields in recoveryinfo struct
     #  'A &B' Usable     :  SET_AB_USABLE(0)
@@ -32,14 +60,23 @@ SlotSwitchReboot () {
         exit 0
     fi
 
-    mtd_device=`cat /proc/mtd | grep recoveryinfo | awk -F ':' '{print $1}'`
-    if [ -z "${mtd_device}" ]; then
-        echo " recoveryinfo part not found, reboot to edl " > /dev/kmsg
-        /bin/sh -c 'reboot edl'
-        exit 0
+    if [ -d $EMMC_DIR ]
+    then
+        EmmcGetPartitionID ${RECINFO_PART_NAME}
+        if [ "${DEV_NUM}" == "${STATUS_INVAL}" ]; then
+            echo "Cannot get ${RECINFO_PART_NAME} partition." > /dev/kmsg
+            /bin/sh -c 'reboot edl'
+            exit 0
+        fi
+    else
+        mtd_device=`cat /proc/mtd | grep ${RECINFO_PART_NAME} | awk -F ':' '{print $1}'`
+        if [ -z "${mtd_device}" ]; then
+            echo " ${RECINFO_PART_NAME} part not found, reboot to edl " > /dev/kmsg
+            /bin/sh -c 'reboot edl'
+            exit 0
+        fi
     fi
 
-    chmod 666 /dev/${mtd_device}
     if [ "x${SLOT_SUFFIX}" == "x" ]; then
         echo "SLOT_SUFFIX not present or invalid, reboot to edl" > /dev/kmsg
         /bin/sh -c 'reboot edl'
