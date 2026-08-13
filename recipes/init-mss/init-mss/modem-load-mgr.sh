@@ -161,7 +161,7 @@ SlotSwitchReboot () {
         fi
 
         echo "Rebooting for switching slots or EDL mode" > /dev/kmsg
-        /bin/sh -c 'reboot'
+        /bin/sh -c 'reboot system-abnormal'
         exit 0
     else
         mtd_device=`cat /proc/mtd | grep recoveryfs | awk -F ':' '{print $1}'`
