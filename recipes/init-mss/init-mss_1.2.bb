@@ -1,8 +1,10 @@
 inherit autotools-brokensep update-rc.d systemd
 
 DESCRIPTION = "Modem init"
-LICENSE = "BSD-3-Clause-Clear"
-LIC_FILES_CHKSUM = "file://${COREBASE}/meta/files/common-licenses/BSD-3-Clause-Clear;md5=7a434440b651f4a472ca93716d01033a"
+# BSD-3-Clause-Clear is not present in all Poky trees; probe at parse time
+# and fall back to BSD where the file is absent, keeping all targets working.
+LICENSE = "${@'BSD-3-Clause-Clear' if os.path.exists(d.getVar('COREBASE') + '/meta/files/common-licenses/BSD-3-Clause-Clear') else 'BSD'}"
+LIC_FILES_CHKSUM = "${@'file://${COREBASE}/meta/files/common-licenses/BSD-3-Clause-Clear;md5=7a434440b651f4a472ca93716d01033a' if os.path.exists(d.getVar('COREBASE') + '/meta/files/common-licenses/BSD-3-Clause-Clear') else 'file://${COREBASE}/meta/files/common-licenses/BSD;md5=3775480a712fc46a69647678acb234cb'}"
 PR = "r7"
 
 FILESPATH =+ "${WORKSPACE}/mdm-ss-mgr:"
