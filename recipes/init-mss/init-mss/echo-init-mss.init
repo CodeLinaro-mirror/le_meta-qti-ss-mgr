@@ -12,6 +12,8 @@ else
 fi
 
 start() {
+    [ -e "/sys/kernel/qcom_rproc/dump_level" ] && [ -s "/etc/dump_level" ] && cat "/etc/dump_level" > /sys/kernel/qcom_rproc/dump_level
+    echo "Updating remoteproc0 state to start." >> /dev/kmsg
     echo "Starting Modem and CDSP service"
     echo start > /sys/class/remoteproc/remoteproc0/state
     echo start > /sys/class/remoteproc/remoteproc1/state
