@@ -17,7 +17,7 @@ SRC_URI += "file://init_mss.conf"
 SRC_URI += "file://init_rproc_mss.service"
 SRC_URI += "file://modem-load-mgr.sh"
 
-S = "${WORKDIR}/init_mss"
+S = "${UNPACKDIR}/init_mss"
 
 # Hold /dev/subsys_modem forever on all SOCs which don't have Modem wakeup support.
 EXTRA_OECONF:append:msm = " --enable-indefinite-sleep"
@@ -50,9 +50,9 @@ do_install() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
         install -d ${D}${sysconfdir}/udev/rules.d/
-        install -m 0644 ${WORKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
-        install -m 0644 ${WORKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
-        install -m 0644 ${WORKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
+        install -m 0644 ${UNPACKDIR}/init_sys_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        install -m 0644 ${UNPACKDIR}/init_mss.rules -D ${D}${sysconfdir}/udev/rules.d/init_mss.rules
+        install -m 0644 ${UNPACKDIR}/init_mss.conf -D ${D}${sysconfdir}/tmpfiles.d/init_mss.conf
         if ${@bb.utils.contains_any('DISTRO_NAME', 'mdm auto', 'true', 'false', d)}; then
            #ADD NAND CHECK IF REQUIRED.
            # Clear the values of After, Requires and WantedBy.
@@ -89,31 +89,31 @@ do_install() {
 
 do_install:kalama() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
 }
 
 do_install:pineapple() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
 }
 
 do_install:kera() {
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
 }
 
 do_install:qcm2290-mtp(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
 do_install:qcs610-odk-64(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 		sed -i '/After=firmware-mount.service/a Requires=rmt_storage.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
 		sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"4080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
@@ -121,20 +121,20 @@ do_install:qcs610-odk-64(){
 
 do_install:qcm4325-mtp(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"6080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
 }
 
 do_install:append:sa535m(){
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-        install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
-        install -m 0644 ${WORKDIR}/init_sys_mss_auto.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        install -m 0755 ${UNPACKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+        install -m 0644 ${UNPACKDIR}/init_sys_mss_auto.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
     fi
 }
 do_install:append:sa525m(){
 	if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-		install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+		install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
 
                 sed -i '/WantedBy/s/multi-user.target//' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/WantedBy/s/$/local-fs.target/' ${D}${systemd_unitdir}/system/init_sys_mss.service
@@ -145,7 +145,7 @@ do_install:append:sa525m(){
           if ${@bb.utils.contains('MACHINE_FEATURES', 'nand-boot', 'true', 'false', d)}; then
 		sed -i '/After=firmware-mount.service/a Before=local-fs.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
           fi
-                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+                install -m 0755 ${UNPACKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
                 sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/RemainAfterExit/a Nice=-20' ${D}${systemd_unitdir}/system/init_sys_mss.service
 	fi
@@ -153,7 +153,7 @@ do_install:append:sa525m(){
 
 do_install:append:sa510m(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
                 rm ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
 
                 #CLEAR the values
@@ -170,7 +170,7 @@ do_install:append:sa510m(){
                 sed -i '/DefaultDependencies=no/a Conflicts=shutdown.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/Requires=firmware-mount.service/a Before=sockets.target' ${D}${systemd_unitdir}/system/init_sys_mss.service
 
-                install -m 0755 ${WORKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
+                install -m 0755 ${UNPACKDIR}/modem-load-mgr.sh -D ${D}${sysconfdir}/initscripts/modem-load-mgr.sh
                 sed -i "/ExecStart=/ c ExecStart=/etc/initscripts/modem-load-mgr.sh " ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/RemainAfterExit/a Nice=-5' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
@@ -178,7 +178,7 @@ do_install:append:sa510m(){
 
 do_install:vienna(){
         if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
-                install -m 0644 ${WORKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+                install -m 0644 ${UNPACKDIR}/init_rproc_mss.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/After=firmware-mount.service/a Requires=rmt_storage.service' ${D}${systemd_unitdir}/system/init_sys_mss.service
                 sed -i '/ExecStart=/ c ExecStart=/bin/sh -c \"for d in /sys/class/remoteproc/remoteproc*/; do if [ \\\"$(cat $d/name)\\\" =  \\\"4080000.remoteproc-mss\\\" ]; then echo start > $d/state; fi; done\ "' ${D}${systemd_unitdir}/system/init_sys_mss.service
         fi
