@@ -1,0 +1,17 @@
+# Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+# SPDX-License-Identifier: BSD-3-Clause-Clear
+
+[Unit]
+Description=Persist qcom_rproc dump_level on change
+ConditionPathExists=/sys/kernel/qcom_rproc/dump_level
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/collect-dump-level.sh
+RemainAfterExit=no
+
+[Install]
+# No WantedBy — this service is triggered only by dump-level-monitor.path,
+# not started directly at boot. Direct boot activation would read the kernel
+# default from sysfs and overwrite the saved /etc/dump_level before
+# init_sys_mss.service has a chance to restore it.

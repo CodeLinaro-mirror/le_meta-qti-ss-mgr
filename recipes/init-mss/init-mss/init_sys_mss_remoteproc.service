@@ -26,6 +26,11 @@ Requires=firmware.mount
 [Service]
 Restart=on-failure
 RemainAfterExit=yes
+ExecStartPre=/bin/sh -c '\
+  [ -e "/sys/kernel/qcom_rproc/dump_level" ] && \
+  [ -s "/etc/dump_level" ] && \
+  cat /etc/dump_level > /sys/kernel/qcom_rproc/dump_level || true \
+'
 ExecStart=/bin/sh -c '\
   echo start > /sys/class/remoteproc/remoteproc0/state; \
   if [ -w /sys/class/remoteproc/remoteproc1/state ]; then \
