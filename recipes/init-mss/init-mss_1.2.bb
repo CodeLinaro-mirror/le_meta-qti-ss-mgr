@@ -51,6 +51,7 @@ do_install:echo() {
     if ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'true', 'false', d)}; then
         install -d ${D}${systemd_unitdir}/system/
         install -m 0644 ${WORKDIR}/init_sys_mss_remoteproc.service -D ${D}${systemd_unitdir}/system/init_sys_mss.service
+        sed -i 's/BindsTo=rmt_storage\.service/BindsTo=tftp_server.service/' ${D}${systemd_unitdir}/system/init_sys_mss.service
         install -d ${D}${systemd_unitdir}/system/sysinit.target.wants
         ln -sf ${systemd_unitdir}/system/init_sys_mss.service ${D}/${systemd_unitdir}/system/sysinit.target.wants/init_sys_mss.service
         install -m 0644 ${WORKDIR}/dump-level-monitor.service -D ${D}${systemd_unitdir}/system/dump-level-monitor.service
